@@ -19,14 +19,16 @@
             width:250px;
             height:250px;
 
+            position: fixed;
+
             /* Center horizontally */
-            display: block;
-            margin: auto;
+            /*display: block;
+            margin: auto;*/
 
             /* Center vertically */
-            position: relative;
+            /*position: relative;
             top: 50%;
-            transform: translateY(-50%);
+            transform: translateY(-50%);*/
         }
 
         .logo_fixed
@@ -36,8 +38,8 @@
             top: 10px;
 
             /* Center horizontally */
-            left: 50%;
-            transform: translate(-50%, 0);
+            /*left: 50%;
+            transform: translate(-50%, 0);*/
         }
 
     </style>
@@ -155,41 +157,108 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
     
     window.onscroll = HandleScroll;
 
-    function HandleScroll()
-    {
-        scrolled = true;
-    }
+    var logo_width = 250;
+    var logo_height = 250;
+    var min_scale = 0.25;
+    var max_scale = 1;
+    var fixed_top = 10;
 
-    setInterval(function() {
-        if (scrolled)
+    var current_t = 1;
+    var current_top = window.innerHeight / 2 - logo_height;
+
+    /*setInterval(function() {
+
+        var scroll_scale = window.innerHeight / 2 - logo_height / 2 - fixed_top;
+        var t = 1 - Math.min(window.scrollY / scroll_scale, 1);
+
+        current_t = current_t + (t - current_t) * 0.4;
+
+        if (Math.abs(t - current_t) > 0.001)
         {
+            // TODO: stop interval when movement finishes, start it again on scroll event
+
+            console.log("scroool");
+
             scrolled = false;
             var logo = document.querySelector("#logo");
 
-            var logo_width = 250;
-            var logo_height = 250;
-            var fixed_top = 10;
-
-            var scroll_scale = window.innerHeight / 2 - logo_height / 2 - fixed_top;
-
-            var min_scale = 0.25;
-            var max_scale = 1;
-            var t = 1 - Math.min(window.scrollY / scroll_scale, 1);
-            var scale = min_scale + (max_scale - min_scale) * t;
-
+            var scale = min_scale + (max_scale - min_scale) * current_t;
             logo.setAttribute("transform", "scale(" + scale + ")");
-            logo.style.width=logo_width*scale + "px";
 
-            if (t <= 0.01)
+            var cur_width = logo_width * scale;
+            var cur_height = logo_height * scale;
+
+            var new_left = window.innerWidth / 2 - cur_width / 2;
+            var new_top = window.innerHeight / 2 - logo_height / 2 - window.scrollY;
+
+            current_top = current_top + (new_top - current_top) * 0.4;
+
+            logo.style.left = new_left + "px";
+            logo.style.top = current_top + "px";
+
+            if (current_top <= fixed_top)
             {
                 logo.setAttribute("class", "logo_fixed");
+                logo.style.top = fixed_top + "px";
             }
             else
             {
                 logo.setAttribute("class", "logo");
             }
         }
-    }, 16);
+
+    }, 16);*/
+
+
+    function Scroll()
+    {
+        var scroll_scale = window.innerHeight / 2 - logo_height / 2 - fixed_top;
+        var t = 1 - Math.min(window.scrollY / scroll_scale, 1);
+
+        current_t = current_t + (t - current_t) * 0.4;
+
+            //console.log("scroool");
+        if (Math.abs(t - current_t) > 0.001)
+        {
+            // TODO: stop interval when movement finishes, start it again on scroll event
+
+            //scrolled = false;
+            var logo = document.querySelector("#logo");
+
+            var scale = min_scale + (max_scale - min_scale) * current_t;
+            logo.setAttribute("transform", "scale(" + scale + ")");
+            //logo.style.transform = "scale(" + scale + ")";
+
+            var cur_width = logo_width * scale;
+            var cur_height = logo_height * scale;
+
+            var new_left = window.innerWidth / 2 - cur_width / 2;
+            var new_top = window.innerHeight / 2 - logo_height / 2 - window.scrollY;
+
+            current_top = current_top + (new_top - current_top) * 0.4;
+
+            logo.style.left = new_left + "px";
+            logo.style.top = current_top + "px";
+
+            if (current_top <= fixed_top)
+            {
+                logo.setAttribute("class", "logo_fixed");
+                logo.style.top = fixed_top + "px";
+            }
+            else
+            {
+                logo.setAttribute("class", "logo");
+            }
+
+            setTimeout(Scroll, 16);
+        }
+    }
+    
+    function HandleScroll()
+    {
+        Scroll();
+        //scrolled = true;
+    }
 </script>
 
 </html>
