@@ -47,7 +47,7 @@
 
 <body style="height: 100%">
         <div class="svg-layer" style="height: 100%">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class="logo" xml:space="preserve">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="logo" class="logo" xml:space="preserve" viewBox="0 0 250 250">
                 <defs xmlns="" />
                 <g xmlns="" id="Layer 01" type="LAYER" name="Layer 01">
                     <path id="path10" transform="matrix(1 0 0 1 -103.44562427331272 -79.6698035951669)" width="245" height="245.00000000000028"
@@ -153,7 +153,11 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
 </body>
 
 <script>
-    var scrolled = false;
+    var on_scroll = false;
+
+    var state = -1;
+    var state_FIXED = 1;
+    var state_SCALED = 2;
     
     window.onscroll = HandleScroll;
 
@@ -161,103 +165,62 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
     var logo_height = 250;
     var min_scale = 0.25;
     var max_scale = 1;
-    var fixed_top = 10;
+
+    var top_min = 10;
+    var top_scale = window.innerHeight / 2 - logo_height / 2 - top_min; 
 
     var current_t = 1;
     var current_top = window.innerHeight / 2 - logo_height;
+    var scroll_div_offset = logo_height / 2 - top_min;
 
-    /*setInterval(function() {
-
-        var scroll_scale = window.innerHeight / 2 - logo_height / 2 - fixed_top;
-        var t = 1 - Math.min(window.scrollY / scroll_scale, 1);
-
-        current_t = current_t + (t - current_t) * 0.4;
-
-        if (Math.abs(t - current_t) > 0.001)
-        {
-            // TODO: stop interval when movement finishes, start it again on scroll event
-
-            console.log("scroool");
-
-            scrolled = false;
-            var logo = document.querySelector("#logo");
-
-            var scale = min_scale + (max_scale - min_scale) * current_t;
-            logo.setAttribute("transform", "scale(" + scale + ")");
-
-            var cur_width = logo_width * scale;
-            var cur_height = logo_height * scale;
-
-            var new_left = window.innerWidth / 2 - cur_width / 2;
-            var new_top = window.innerHeight / 2 - logo_height / 2 - window.scrollY;
-
-            current_top = current_top + (new_top - current_top) * 0.4;
-
-            logo.style.left = new_left + "px";
-            logo.style.top = current_top + "px";
-
-            if (current_top <= fixed_top)
-            {
-                logo.setAttribute("class", "logo_fixed");
-                logo.style.top = fixed_top + "px";
-            }
-            else
-            {
-                logo.setAttribute("class", "logo");
-            }
-        }
-
-    }, 16);*/
-
+    var logo = document.querySelector("#logo");
 
     function Scroll()
     {
-        var scroll_scale = window.innerHeight / 2 - logo_height / 2 - fixed_top;
-        var t = 1 - Math.min(window.scrollY / scroll_scale, 1);
+        // Determine unit interpolation parameter between start/end of scale effect
+        var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
+        var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
+        current_t = current_t + (target_t - current_t) * 0.3;
 
-        current_t = current_t + (t - current_t) * 0.4;
-
-            //console.log("scroool");
-        if (Math.abs(t - current_t) > 0.001)
+        if (Math.abs(target_t - current_t) <= 0.001)
         {
-            // TODO: stop interval when movement finishes, start it again on scroll event
-
-            //scrolled = false;
-            var logo = document.querySelector("#logo");
-
-            var scale = min_scale + (max_scale - min_scale) * current_t;
-            logo.setAttribute("transform", "scale(" + scale + ")");
-            //logo.style.transform = "scale(" + scale + ")";
-
-            var cur_width = logo_width * scale;
-            var cur_height = logo_height * scale;
-
-            var new_left = window.innerWidth / 2 - cur_width / 2;
-            var new_top = window.innerHeight / 2 - logo_height / 2 - window.scrollY;
-
-            current_top = current_top + (new_top - current_top) * 0.4;
-
-            logo.style.left = new_left + "px";
-            logo.style.top = current_top + "px";
-
-            if (current_top <= fixed_top)
-            {
-                logo.setAttribute("class", "logo_fixed");
-                logo.style.top = fixed_top + "px";
-            }
-            else
-            {
-                logo.setAttribute("class", "logo");
-            }
-
-            setTimeout(Scroll, 16);
+            on_scroll = false;
+            return;
         }
+
+        var top = top_min + top_scale * current_t;
+        if (top <= top_min && state != state_FIXED)
+        {
+            logo.setAttribute("class", "logo_fixed");
+            state = state_FIXED;
+        }
+
+        else if (state != state_SCALED)
+        {
+            logo.setAttribute("class", "logo");            
+            state = state_SCALED;
+        }
+
+        var scale = min_scale + (max_scale - min_scale) * current_t;
+        var width = logo_width * scale;
+        var height = logo_height * scale;
+        var new_left = window.innerWidth / 2 - width / 2;
+
+        logo.style.width = width + "px";    // setting svg width will also affect height as aspect ratio is being preserved
+        logo.style.height = height + "px";  // ...height style won't be set so need to do that manually
+        logo.style.left = new_left + "px";
+        logo.style.top = top + "px";
+
+        setTimeout(Scroll, 16);
     }
     
     function HandleScroll()
     {
-        Scroll();
-        //scrolled = true;
+        if (!on_scroll)
+        {
+            on_scroll = true;
+            Scroll();
+        }
     }
 </script>
 
