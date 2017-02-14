@@ -165,24 +165,21 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
         // Determine unit interpolation parameter between start/end of scale effect
         var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
         var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
-        current_t = current_t + (target_t - current_t) * 0.3;
 
         if (snap)
-        {
             current_t = target_t;
-            SetPosition(target_t);
-            snap = false;
-            on_scroll = false;
-            return;
-        }
+        else
+            current_t = current_t + (target_t - current_t) * 0.3;
+
+        snap = false;
+
+        SetPosition(current_t);
 
         if (Math.abs(target_t - current_t) <= 0.001)
         {
             on_scroll = false;
             return;
         }
-
-        SetPosition(current_t);
 
         setTimeout(Scroll, 16);
     }
