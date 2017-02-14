@@ -151,12 +151,9 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
             this.DoSnap = true;
             this.Current_t = 0;
 
-            // Set an initial position of center screen
-            // If the browser reloads in a scrolled position, the scroll event will reposition
-            SetPosition(this, 1);
-
             // Setup window event handlers
             var self = this;
+            window.onload = function() { MatchScroll(self); };
             window.onscroll = function() { HandleScroll(self); };
             window.onresize = function() { HandleResize(self); };
         }
