@@ -15,20 +15,7 @@
 
         .logo
         {
-            /* Base size */
-            width:250px;
-            height:250px;
-
             position: fixed;
-
-            /* Center horizontally */
-            /*display: block;
-            margin: auto;*/
-
-            /* Center vertically */
-            /*position: relative;
-            top: 50%;
-            transform: translateY(-50%);*/
         }
 
         .logo_fixed
@@ -36,10 +23,6 @@
             /* Fix to top */
             position: fixed;
             top: 10px;
-
-            /* Center horizontally */
-            /*left: 50%;
-            transform: translate(-50%, 0);*/
         }
 
     </style>
@@ -154,13 +137,12 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
 
 <script>
     var on_scroll = false;
+    var snap = true;
 
     var state = -1;
     var state_FIXED = 1;
     var state_SCALED = 2;
     
-    window.onscroll = HandleScroll;
-
     var logo_width = 250;
     var logo_height = 250;
     var min_scale = 0.25;
@@ -169,26 +151,21 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
     var top_min = 10;
     var top_scale = window.innerHeight / 2 - logo_height / 2 - top_min; 
 
-    var current_t = 1;
+    var current_t = 0;
     var current_top = window.innerHeight / 2 - logo_height;
     var scroll_div_offset = logo_height / 2 - top_min;
 
     var logo = document.querySelector("#logo");
 
-    function Scroll()
+    function GetScrollT()
     {
-        // Determine unit interpolation parameter between start/end of scale effect
         var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
-        var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
-        current_t = current_t + (target_t - current_t) * 0.3;
+        return 1 - Math.min(window.scrollY / scroll_divisor, 1);
+    }
 
-        if (Math.abs(target_t - current_t) <= 0.001)
-        {
-            on_scroll = false;
-            return;
-        }
-
-        var top = top_min + top_scale * current_t;
+    function SetPosition(t)
+    {
+        var top = top_min + top_scale * t;
         if (top <= top_min && state != state_FIXED)
         {
             logo.setAttribute("class", "logo_fixed");
@@ -201,7 +178,7 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
             state = state_SCALED;
         }
 
-        var scale = min_scale + (max_scale - min_scale) * current_t;
+        var scale = min_scale + (max_scale - min_scale) * t;
         var width = logo_width * scale;
         var height = logo_height * scale;
         var new_left = window.innerWidth / 2 - width / 2;
@@ -209,11 +186,37 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
         logo.style.width = width + "px";    // setting svg width will also affect height as aspect ratio is being preserved
         logo.style.height = height + "px";  // ...height style won't be set so need to do that manually
         logo.style.left = new_left + "px";
-        logo.style.top = top + "px";
+        logo.style.top = top + "px";        
+    }
+
+    function Scroll()
+    {
+        // Determine unit interpolation parameter between start/end of scale effect
+        var target_t = GetScrollT();
+        current_t = current_t + (target_t - current_t) * 0.3;
+
+        if (snap)
+        {
+            current_t = target_t;
+            SetPosition(target_t);
+            snap = false;
+            on_scroll = false;
+            return;
+        }
+
+        if (Math.abs(target_t - current_t) <= 0.001)
+        {
+            on_scroll = false;
+            return;
+        }
+
+        SetPosition(current_t);
 
         setTimeout(Scroll, 16);
     }
     
+    SetPosition(1);
+
     function HandleScroll()
     {
         if (!on_scroll)
@@ -222,6 +225,20 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
             Scroll();
         }
     }
+
+    function HandleResize()
+    {
+        if (!on_scroll)
+        {
+            on_scroll = true;
+            snap = true;
+            Scroll();
+        }
+    }
+
+    window.onscroll = HandleScroll;
+    window.onresize = HandleResize;
+
 </script>
 
 </html>
