@@ -18,13 +18,6 @@
             position: fixed;
         }
 
-        .logo_fixed
-        {
-            /* Fix to top */
-            position: fixed;
-            top: 10px;
-        }
-
     </style>
 </head>
 
@@ -139,10 +132,6 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
     var on_scroll = false;
     var snap = true;
 
-    var state = -1;
-    var state_FIXED = 1;
-    var state_SCALED = 2;
-    
     var logo_width = 250;
     var logo_height = 250;
     var min_scale = 0.25;
@@ -157,27 +146,9 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
 
     var logo = document.querySelector("#logo");
 
-    function GetScrollT()
-    {
-        var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
-        return 1 - Math.min(window.scrollY / scroll_divisor, 1);
-    }
-
     function SetPosition(t)
     {
         var top = top_min + top_scale * t;
-        if (top <= top_min && state != state_FIXED)
-        {
-            logo.setAttribute("class", "logo_fixed");
-            state = state_FIXED;
-        }
-
-        else if (state != state_SCALED)
-        {
-            logo.setAttribute("class", "logo");            
-            state = state_SCALED;
-        }
-
         var scale = min_scale + (max_scale - min_scale) * t;
         var width = logo_width * scale;
         var height = logo_height * scale;
@@ -192,7 +163,8 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
     function Scroll()
     {
         // Determine unit interpolation parameter between start/end of scale effect
-        var target_t = GetScrollT();
+        var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
+        var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
         current_t = current_t + (target_t - current_t) * 0.3;
 
         if (snap)
