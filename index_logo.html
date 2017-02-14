@@ -129,84 +129,112 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
 </body>
 
 <script>
-    var on_scroll = false;
-    var snap = true;
 
-    var logo_width = 250;
-    var logo_height = 250;
-    var min_scale = 0.25;
-    var max_scale = 1;
-
-    var top_min = 10;
-    var top_scale = window.innerHeight / 2 - logo_height / 2 - top_min; 
-
-    var current_t = 0;
-    var current_top = window.innerHeight / 2 - logo_height;
-    var scroll_div_offset = logo_height / 2 - top_min;
-
-    var logo = document.querySelector("#logo");
-
-    function SetPosition(t)
+    CeltoysLogo = (function()
     {
-        var top = top_min + top_scale * t;
-        var scale = min_scale + (max_scale - min_scale) * t;
-        var width = logo_width * scale;
-        var height = logo_height * scale;
-        var new_left = window.innerWidth / 2 - width / 2;
-
-        logo.style.width = width + "px";    // setting svg width will also affect height as aspect ratio is being preserved
-        logo.style.height = height + "px";  // ...height style won't be set so need to do that manually
-        logo.style.left = new_left + "px";
-        logo.style.top = top + "px";        
-    }
-
-    function Scroll()
-    {
-        // Determine unit interpolation parameter between start/end of scale effect
-        var scroll_divisor = window.innerHeight / 2 - scroll_div_offset;
-        var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
-
-        if (snap)
-            current_t = target_t;
-        else
-            current_t = current_t + (target_t - current_t) * 0.3;
-
-        snap = false;
-
-        SetPosition(current_t);
-
-        if (Math.abs(target_t - current_t) <= 0.001)
+        function CeltoysLogo(node)
         {
-            on_scroll = false;
-            return;
+            this.Node = document.querySelector(node);
+
+            // Get logo size from the view box
+            var view_box = this.Node.getAttribute("viewBox").split(" ");
+            this.LogoWidth = parseInt(view_box[2]);
+            this.LogoHeight = parseInt(view_box[3]);
+
+            // Behaviour config parameters
+            this.ScaleMin = 0.25;
+            this.ScaleRange = 0.75;
+            this.TopMin = 10;
+
+            // Scroll state
+            this.IsScrolling = false;
+            this.DoSnap = true;
+            this.Current_t = 0;
+
+            // Set an initial position of center screen
+            // If the browser reloads in a scrolled position, the scroll event will reposition
+            SetPosition(this, 1);
+
+            // Setup window event handlers
+            var self = this;
+            window.onscroll = function() { HandleScroll(self); };
+            window.onresize = function() { HandleResize(self); };
         }
 
-        setTimeout(Scroll, 16);
-    }
+        function SetPosition(self, t)
+        {
+            var scale = self.ScaleMin + self.ScaleRange * t;
+
+            // Setting svg width will also affect height as aspect ratio is preserved
+            var width = self.LogoWidth * scale;
+            self.Node.style.width = width + "px";
+
+            // Height style won't be set so need to do that manually for positioning
+            var height = self.LogoHeight * scale;
+            self.Node.style.height = height + "px";
+
+            // Center logo horizontally
+            var left = window.innerWidth / 2 - width / 2;
+            self.Node.style.left = left + "px";
+
+            // Match vertical scroll
+            var top_scale = window.innerHeight / 2 - self.LogoHeight / 2 - self.TopMin;
+            var top = self.TopMin + top_scale * t;
+            self.Node.style.top = top + "px";
+        }
+
+        function MatchScroll(self)
+        {
+            // Determine unit interpolation parameter between start/end of scale effect
+            var scroll_divisor = window.innerHeight / 2 - self.LogoHeight + self.TopMin;
+            var target_t = 1 - Math.min(window.scrollY / scroll_divisor, 1);
+
+            // Ease or snap toward target interpolation
+            if (self.DoSnap)
+                self.Current_t = target_t;
+            else
+                self.Current_t = self.Current_t + (target_t - self.Current_t) * 0.3;
+
+            // Snap is a one-time event so cancel that
+            self.DoSnap = false;
+
+            SetPosition(self, self.Current_t);
+
+            // Cancel scrolling once the target is reached
+            if (Math.abs(target_t - self.Current_t) <= 0.001)
+            {
+                self.IsScrolling = false;
+                return;
+            }
+
+            // Reschedule another attempt to match window scroll
+            setTimeout(function() { MatchScroll(self); }, 16);
+        }
+
+        function HandleScroll(self)
+        {
+            if (!self.IsScrolling)
+            {
+                self.IsScrolling = true;
+                MatchScroll(self);
+            }
+        }
+
+        function HandleResize(self)
+        {
+            if (!self.IsScrolling)
+            {
+                self.IsScrolling = true;
+                self.DoSnap = true;
+                MatchScroll(self);
+            }
+        }
     
-    SetPosition(1);
+        return CeltoysLogo;
 
-    function HandleScroll()
-    {
-        if (!on_scroll)
-        {
-            on_scroll = true;
-            Scroll();
-        }
-    }
+    })();
 
-    function HandleResize()
-    {
-        if (!on_scroll)
-        {
-            on_scroll = true;
-            snap = true;
-            Scroll();
-        }
-    }
-
-    window.onscroll = HandleScroll;
-    window.onresize = HandleResize;
+    var logo = new CeltoysLogo("#logo");
 
 </script>
 
