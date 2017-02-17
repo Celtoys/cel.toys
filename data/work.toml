@@ -1,0 +1,57 @@
+title = "Work"
+
+[[projects]]
+	name = "Dauntless"
+	folder = "dauntless"
+
+[[projects]]
+	name = "No Man's Sky"
+	folder = "nms"
+
+[[projects]]
+	name = "Rome 2: Total War"
+	folder = "rometw"
+
+[[projects]]
+	name = "Fable Heroes"
+	folder = "fableheroes"
+
+[[projects]]
+	name = "Fable 3"
+	folder = "fable3"
+
+[[projects]]
+	name = "Fable 2"
+	folder = "fable2"
+
+[[projects]]
+	name = "Splinter Cell: Conviction"
+	folder = "sc5"
+
+[[projects]]
+	name = "Advent Shadow"
+	folder = "adventshadow"
+
+[[projects]]
+	name = "Black & White: Creatures"
+	folder = "bwc"
+
+[[projects]]
+	name = "Aliens Techdemo"
+	folder = "aliens"
+
+[[projects]]
+	name = "Flintstones: Viva Rock Vegas"
+	folder = "vrv"
+
+[[projects]]
+	name = "Army Men: Sarge's Heroes"
+	folder = "armymen"
+
+[[projects]]
+	name = "Lucky Luke"
+	folder = "luckyluke"
+
+[[projects]]
+	name = "V-Rally"
+	folder = "vrally"
