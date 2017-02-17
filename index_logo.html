@@ -9,13 +9,7 @@
         
         body
         {
-            margin: 0;
             background-color:rgba(255,255,255,1);
-        }
-
-        .logo
-        {
-            position: fixed;
         }
 
     </style>
@@ -141,6 +135,7 @@ Quick six blind smart out burst. Perfectly on furniture dejection determine my d
             div.innerHTML = SVG;
             this.Node = div.firstChild.nextSibling;
             parent_node.appendChild(this.Node);
+            this.Node.style.position = "fixed";
 
             // Get logo size from the view box
             var view_box = this.Node.getAttribute("viewBox").split(" ");
