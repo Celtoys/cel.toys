@@ -43,6 +43,7 @@
                 this.Node = div.firstChild.nextSibling;
                 parent_node.appendChild(this.Node);
                 this.Node.style.position = "fixed";
+                this.Node.style.zIndex = 3;
 
                 // Get logo size from the view box
                 var view_box = this.Node.getAttribute("viewBox").split(" ");

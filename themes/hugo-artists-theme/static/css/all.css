@@ -633,8 +633,18 @@ header .logo path
 header nav
 {
   position: fixed;
-  padding: 35px 30px 0 0;
+  padding: 10px 30px 10px 0;
   right: 0;
+  background: white;
+  width: 100%;
+  text-align: right;
+  z-index: 3;
+}
+
+
+.celtoys_logo
+{
+  z-index: 3;
 }
 
 header nav a
