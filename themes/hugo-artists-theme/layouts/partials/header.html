@@ -1,6 +1,9 @@
 {{ "<!-- Header section -->" | safeHTML }}
 <header id="header">
-    <nav>
+    <nav id="title">
+        <a href="#header">celtoys</celtoys>
+    </nav>
+    <nav id="links">
         {{ with .Site.Params.about.title }}<a href="#about-me">{{ . }}</a>{{ end }}
         {{ with .Site.Data.work.title }}<a href="#work">{{ . }}</a>{{ end }}
         {{ with .Site.Data.clients.title }}<a href="#clients">{{ . }}</a>{{ end }}

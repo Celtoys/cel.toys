@@ -599,9 +599,10 @@ fieldset {
     color: #d7ae5c; }
 
 h3, header nav a, header .kicker, footer .lockup .content-wrap a {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  text-transform: uppercase; }
+  letter-spacing: 0.2em;
+}
 
 footer
 {
@@ -630,7 +631,15 @@ header .logo path
     fill: rgba(0, 0, 0, 0.4);
 }
 
-header nav
+header nav#title
+{
+  position: fixed;
+  left: 0;
+  padding: 10px 30px 10px 0;  
+  z-index: 4;
+}
+
+header nav#links
 {
   position: fixed;
   padding: 10px 30px 10px 0;
@@ -641,20 +650,21 @@ header nav
   z-index: 3;
 }
 
-
-.celtoys_logo
+header nav#title a
 {
-  z-index: 3;
+  display: inline-block;
+  margin-left: 20px;
+  color: #1a8800;
 }
 
-header nav a
+header nav#links a
 {
   display: inline-block;
   margin-left: 20px;
   color: rgba(0, 0, 0, 0.7);
 }
 
-header nav a:hover
+header nav#links a:hover
 {
   color: black;
 }

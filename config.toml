@@ -7,9 +7,8 @@ title = "Celtoys"
   description = "Celtoys"
 
   [params.about]
-    title = "About"
+    title = "about"
     bio = "bio **bio**"
-
-    [[params.about.skills]]
-      name = "Code"
-      value = 9
+  
+  [params.work]
+    title = "work"
